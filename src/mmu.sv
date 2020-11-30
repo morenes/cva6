@@ -16,19 +16,38 @@
 
 
 module mmu import ariane_pkg::*; #(
-    parameter int unsigned INSTR_TLB_ENTRIES     = 4,
-    parameter int unsigned DATA_TLB_ENTRIES      = 4,
-    parameter int unsigned ASID_WIDTH            = 1,
-    parameter ariane_pkg::ariane_cfg_t ArianeCfg = ariane_pkg::ArianeDefaultConfig
+    parameter INSTR_TLB_ENTRIES     = 4,
+    parameter DATA_TLB_ENTRIES      = 4,
+    parameter ASID_WIDTH            = 1,
+    parameter ariane_pkg::ariane_cfg_t ArianeCfg = 0//ariane_pkg::ArianeDefaultConfig
 ) (
     input  logic                            clk_i,
     input  logic                            rst_ni,
     input  logic                            flush_i,
     input  logic                            enable_translation_i,
     input  logic                            en_ld_st_translation_i,   // enable virtual memory translation for load/stores
+    
+    /*AUTOSVA
+    itlb_lookup: itlb_req -IN> itlb_res
+    itlb_req_val = icache_areq_i.fetch_req
+    itlb_req_rdy = icache_areq_o.fetch_valid
+    [riscv::VLEN+ASID_WIDTH-1:0] itlb_req_stable = {asid_i,icache_areq_i.fetch_vaddr}
+    itlb_req_transid = '0
+    itlb_res_val = icache_areq_o.fetch_valid
+    itlb_res_transid = '0
+
+    dtlb_lookup: dtlb_req -IN> dtlb_res
+    dtlb_req_val = lsu_req_i
+    [riscv::VLEN+ASID_WIDTH-1:0] dtlb_req_stable = {asid_i, lsu_vaddr_i};
+    dtlb_req_transid = '0
+    dtlb_res_val = lsu_valid_o
+    dtlb_res_transid = '0
+    */
+    
     // IF interface
     input  icache_areq_o_t                  icache_areq_i,
     output icache_areq_i_t                  icache_areq_o,
+
     // LSU interface
     // this is a more minimalistic interface because the actual addressing logic is handled
     // in the LSU as we distinguish load and stores, what we do here is simple address translation
@@ -160,7 +179,7 @@ module mmu import ariane_pkg::*; #(
         .itlb_hit_i             ( itlb_lu_hit           ),
         .itlb_vaddr_i           ( icache_areq_i.fetch_vaddr ),
 
-        .dtlb_access_i          ( dtlb_lu_access        ),
+        .dtlb_access_i          ( dtlb_lu_access),// && !misaligned_ex_i.valid),
         .dtlb_hit_i             ( dtlb_lu_hit           ),
         .dtlb_vaddr_i           ( lsu_vaddr_i           ),
 

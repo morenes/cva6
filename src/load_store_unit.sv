@@ -23,6 +23,15 @@ module load_store_unit import ariane_pkg::*; #(
     output logic                     no_st_pending_o,
     input  logic                     amo_valid_commit_i,
 
+    /*AUTOSVA
+    lsu_lookup: lsu_req -IN> lsu_res
+    lsu_req_val = lsu_valid_i && fu_data_i.fu == LOAD
+    lsu_req_rdy = lsu_ready_o
+    [TRANS_ID_BITS-1:0] lsu_req_transid = fu_data_i.trans_id
+    [TRANS_ID_BITS+4-1:0] lsu_req_stable = {fu_data_i.trans_id,fu_data_i.fu}
+    lsu_res_val = load_valid_o
+    [TRANS_ID_BITS-1:0] lsu_res_transid = load_trans_id_o
+    */
     input  fu_data_t                 fu_data_i,
     output logic                     lsu_ready_o,              // FU is ready e.g. not busy
     input  logic                     lsu_valid_i,              // Input is valid
@@ -131,9 +140,9 @@ module load_store_unit import ariane_pkg::*; #(
     // MMU e.g.: TLBs/PTW
     // -------------------
     mmu #(
-        .INSTR_TLB_ENTRIES      ( 16                     ),
-        .DATA_TLB_ENTRIES       ( 16                     ),
-        .ASID_WIDTH             ( ASID_WIDTH             ),
+        .INSTR_TLB_ENTRIES      ( 4                     ),
+        .DATA_TLB_ENTRIES       ( 4                     ),
+        .ASID_WIDTH             ( 2             ),
         .ArianeCfg              ( ArianeCfg              )
     ) i_mmu (
             // misaligned bypass

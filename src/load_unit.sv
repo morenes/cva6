@@ -19,6 +19,21 @@ module load_unit import ariane_pkg::*; #(
     input  logic                     clk_i,    // Clock
     input  logic                     rst_ni,   // Asynchronous reset active low
     input  logic                     flush_i,
+
+    /*AUTOSVA
+    lu_lookup: lu_req -IN> lu_res
+    lu_req_val = valid_i
+    [TRANS_ID_BITS-1:0] lu_req_transid = lsu_ctrl_i.trans_id
+    lu_res_val = valid_o
+    [TRANS_ID_BITS-1:0] lu_res_transid = trans_id_o
+
+    ls_dc: dc_req --OUT> dc_res
+    dc_req_val = req_port_o.data_req
+    dc_req_rdy = req_port_i.data_gnt
+    dc_req_transid = '0
+    dc_res_val = req_port_i.data_rvalid
+    dc_res_transid = '0
+    */
     // load unit input port
     input  logic                     valid_i,
     input  lsu_ctrl_t                lsu_ctrl_i,

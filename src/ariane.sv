@@ -24,7 +24,7 @@ import "DPI-C" function void init_dromajo(string cfg_f_name);
 
 
 module ariane import ariane_pkg::*; #(
-  parameter ariane_pkg::ariane_cfg_t ArianeCfg     = ariane_pkg::ArianeDefaultConfig
+  parameter ariane_pkg::ariane_cfg_t ArianeCfg = '0// ariane_pkg::ArianeDefaultConfig
 ) (
   input  logic                         clk_i,
   input  logic                         rst_ni,
@@ -42,6 +42,7 @@ module ariane import ariane_pkg::*; #(
   // firesim trace port
   output traced_instr_pkg::trace_port_t trace_o,
 `endif
+
 `ifdef PITON_ARIANE
   // L15 (memory side)
   output wt_cache_pkg::l15_req_t       l15_req_o,

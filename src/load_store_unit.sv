@@ -46,6 +46,15 @@ module load_store_unit import ariane_pkg::*; #(
     output logic                     store_valid_o,
     output exception_t               store_exception_o,        // to WB, signal exception status ST exception
 
+    /*AUTOSVA
+    commit: store_res -OUT> commit
+    store_res_val = store_valid_o
+    [TRANS_ID_BITS-1:0] store_res_transid = store_trans_id_o
+    commit_val = commit_i
+    commit_rdy = commit_ready_o
+    [TRANS_ID_BITS-1:0] commit_transid = commit_tran_id_i
+    */
+
     input  logic                     commit_i,                 // commit the pending store
     output logic                     commit_ready_o,           // commit queue is ready to accept another commit request
     input  logic [TRANS_ID_BITS-1:0] commit_tran_id_i,

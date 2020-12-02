@@ -23,6 +23,7 @@ module load_unit import ariane_pkg::*; #(
     /*AUTOSVA
     lu_lookup: lu_req -IN> lu_res
     lu_req_val = valid_i
+    lu_req_rdy = pop_ld_o
     [TRANS_ID_BITS-1:0] lu_req_transid = lsu_ctrl_i.trans_id
     lu_res_val = valid_o
     [TRANS_ID_BITS-1:0] lu_res_transid = trans_id_o

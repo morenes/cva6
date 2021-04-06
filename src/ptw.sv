@@ -40,19 +40,15 @@ module ptw import ariane_pkg::*; #(
     ptw_req: ptw_req --OUT> ptw_res
     ptw_req_val = req_port_o.data_req
     ptw_req_rdy = req_port_i.data_gnt
-    ptw_req_transid = '0
     ptw_res_val = req_port_i.data_rvalid
-    ptw_res_transid = '0
 
     itlb_iface: itlb --IN> itlb_update
     itlb_iface_active = ptw_active_o
     itlb_val = enable_translation_i & itlb_access_i & ~itlb_hit_i & ~dtlb_access_i & !flush_i
     itlb_rdy = !ptw_active_o
     [riscv::VLEN-1:0] itlb_stable = itlb_vaddr_i
-    itlb_transid = '0
     [riscv::VLEN-1:0] itlb_data = itlb_vaddr_i
     itlb_update_val = itlb_update_o.valid || walking_instr_o && (ptw_access_exception_o || ptw_error_o || ptw_active_o && flush_i)
-    itlb_update_transid = '0
     [riscv::VLEN-1:0] itlb_update_data = update_vaddr_o
 
     dtlb_iface: dtlb --IN> dtlb_update
@@ -60,9 +56,9 @@ module ptw import ariane_pkg::*; #(
     dtlb_val = en_ld_st_translation_i & dtlb_access_i & ~dtlb_hit_i & !flush_i
     dtlb_rdy = !ptw_active_o
     [riscv::VLEN-1:0] dtlb_stable = dtlb_vaddr_i
-    [riscv::VLEN-1:0] dtlb_transid = dtlb_vaddr_i
+    [riscv::VLEN-1:0] dtlb_data = dtlb_vaddr_i
     dtlb_update_val = dtlb_update_o.valid || !walking_instr_o && (ptw_access_exception_o || ptw_error_o || ptw_active_o && flush_i)
-    [riscv::VLEN-1:0] dtlb_update_transid = update_vaddr_o
+    [riscv::VLEN-1:0] dtlb_update_data = update_vaddr_o
     */
 
     // to TLBs, update logic
@@ -159,10 +155,10 @@ module ptw import ariane_pkg::*; #(
 
     assign req_port_o.tag_valid      = tag_valid_q;
 
-    logic allow_access;
+    wire allow_access = 1'b1;
 
     assign bad_paddr_o = ptw_access_exception_o ? ptw_pptr_q : 'b0;
-
+/* REMOVE FOR SIMPLICITY OF VERIFICATION
     pmp #(
         .PLEN       ( riscv::PLEN            ),
         .PMP_LEN    ( riscv::PLEN - 2        ),
@@ -178,7 +174,7 @@ module ptw import ariane_pkg::*; #(
         .conf_i        ( pmpcfg_i           ),
         .allow_o       ( allow_access       )
     );
-
+*/
     //-------------------
     // Page table walker
     //-------------------

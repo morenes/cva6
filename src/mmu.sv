@@ -7,7 +7,7 @@
 // this License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
-//
+
 // Author: Florian Zaruba, ETH Zurich
 // Date: 19/04/2017
 // Description: Memory Management Unit for Ariane, contains TLB and
@@ -32,16 +32,12 @@ module mmu import ariane_pkg::*; #(
     itlb_req_val = icache_areq_i.fetch_req
     itlb_req_rdy = icache_areq_o.fetch_valid
     [riscv::VLEN+ASID_WIDTH-1:0] itlb_req_stable = {asid_i,icache_areq_i.fetch_vaddr}
-    itlb_req_transid = '0
     itlb_res_val = icache_areq_o.fetch_valid
-    itlb_res_transid = '0
 
     dtlb_lookup: dtlb_req -IN> dtlb_res
     dtlb_req_val = lsu_req_i
     [riscv::VLEN+ASID_WIDTH-1:0] dtlb_req_stable = {asid_i, lsu_vaddr_i};
-    dtlb_req_transid = '0
     dtlb_res_val = lsu_valid_o
-    dtlb_res_transid = '0
     */
     
     // IF interface
@@ -288,6 +284,8 @@ module mmu import ariane_pkg::*; #(
     assign match_any_execute_region = ariane_pkg::is_inside_execute_regions(ArianeCfg, {{64-riscv::PLEN{1'b0}}, icache_areq_o.fetch_paddr});
 
     // Instruction fetch
+    assign pmp_instr_allow = 1'b1;
+    /*
     pmp #(
         .PLEN       ( riscv::PLEN            ),
         .PMP_LEN    ( riscv::PLEN - 2        ),
@@ -302,7 +300,7 @@ module mmu import ariane_pkg::*; #(
         .conf_i        ( pmpcfg_i                  ),
         .allow_o       ( pmp_instr_allow           )
     );
-
+    */
     //-----------------------
     // Data Interface
     //-----------------------
@@ -431,6 +429,8 @@ module mmu import ariane_pkg::*; #(
     end
 
     // Load/store PMP check
+    assign pmp_data_allow = 1'b1; 
+    /*
     pmp #(
         .PLEN       ( riscv::PLEN            ),
         .PMP_LEN    ( riscv::PLEN - 2        ),
@@ -444,7 +444,7 @@ module mmu import ariane_pkg::*; #(
         .conf_i        ( pmpcfg_i            ),
         .allow_o       ( pmp_data_allow      )
     );
-
+    */
     // ----------
     // Registers
     // ----------

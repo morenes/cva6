@@ -27,16 +27,12 @@ module tlb import ariane_pkg::*; #(
     lk_req_val = lu_access_i
     lk_req_rdy = lu_access_i && lu_hit_o
     [riscv::VLEN+ASID_WIDTH-1:0] lk_req_stable = {lu_vaddr_i, lu_asid_i}
-    lk_req_transid = '0
     lk_res_val = lu_access_i && lu_hit_o
-    lk_res_transid = '0
 
     update: miss -OUT> alloc
     miss_val = lu_access_i && !lu_hit_o
-    miss_transid = '0
     [27:0] miss_data = {lu_asid_i,lu_vaddr_i[38:12]}
     alloc_val = update_i.valid
-    alloc_transid = '0
     [27:0] alloc_data = {update_i.asid,update_i.vpn}
     */
     // Update TLB
